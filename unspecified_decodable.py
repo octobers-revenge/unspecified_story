@@ -1,6 +1,5 @@
 import os
 import re
-import math
 import openpyxl
 import base64
 from dotenv import load_dotenv
@@ -30,16 +29,13 @@ def extract_word_lists(filepath):
 
     return mastered_words, target_words
 
-def generate_decodable_text(mastered_words, target_words, num_pages=5, extra_instruction=""):
+def generate_decodable_text(mastered_words, target_words, num_pages=5):
     prompt = f"""
     Write a short children's decodable book.
-    Use ONLY these mastered words: {mastered_words}.
+    Use primarily these mastered words: {mastered_words}.
     Include and repeat these target learning words: {target_words}.
-    Make sure at least 60% of the words in the learning words list are used.
-    Make sure at least 80% of the words are mastered words.
     Sentences should be short, simple, and repetitive.
     The book should have {num_pages} pages, each separated by a line containing only '---'.
-    {extra_instruction}
     """
     resp = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -59,7 +55,7 @@ def analyze_story_words(story_text, mastered_words, target_words):
     ratio_mastered = len(used_mastered) / len(mastered_set) if mastered_set else 0
     ratio_target = len(used_target) / len(target_set) if target_set else 0
 
-    return used_mastered, used_target, ratio_mastered, ratio_target
+    return used_mastered, used_target, ratio_mastered, ratio_target, (used_mastered+used_target)/words
 
 def extract_character_description(story_text):
     """Ask GPT to summarize the main character for consistent illustration."""
@@ -109,28 +105,13 @@ def main():
     excel_path = "Updated Child Data Aug12th2015 (1).xlsx"
     mastered_words, target_words = extract_word_lists(excel_path)
 
+    # Always generate a 5-page story, no regeneration
     num_pages = 5 
     story_text = generate_decodable_text(mastered_words, target_words, num_pages=num_pages)
 
-    used_mastered, used_target, ratio_mastered, ratio_target = analyze_story_words(
+    used_mastered, used_target, ratio_mastered, ratio_target, freq_score = analyze_story_words(
         story_text, mastered_words, target_words
     )
-
-    if ratio_target < 0.6:
-        scale_factor = math.ceil(1 / ratio_target)
-        num_pages = min(num_pages * scale_factor, 30)  
-        print(f"Target ratio too low ({ratio_target:.2f}), regenerating with {num_pages} pages...")
-
-        story_text = generate_decodable_text(
-            mastered_words,
-            target_words,
-            num_pages=num_pages,
-            extra_instruction="Please repeat the target words more often and ensure each page includes them."
-        )
-
-        used_mastered, used_target, ratio_mastered, ratio_target = analyze_story_words(
-            story_text, mastered_words, target_words
-        )
 
     # Extract the main character description for consistent illustrations
     character_description = extract_character_description(story_text)
@@ -151,6 +132,7 @@ def main():
     print(f"Story saved to: {output_file}")
     print(f"Used {len(used_mastered)}/{len(mastered_words)} mastered words ({ratio_mastered:.2f})")
     print(f"Used {len(used_target)}/{len(target_words)} target words ({ratio_target:.2f})")
+    print(f"Overall frequency of mastered/target words in story: {freq_score:.2f}")
 
     generate_images_for_story(story_text, client, IMAGES_DIR, character_description)
 
