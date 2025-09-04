@@ -12,28 +12,31 @@ OUTPUT_DIR = "generated_book"
 IMAGES_DIR = os.path.join(OUTPUT_DIR, "images")
 os.makedirs(IMAGES_DIR, exist_ok=True)
 
-def extract_word_lists(filepath):
+
+
+def load_fry_words(filepath="1000words.txt", top_n=100):
+    with open(filepath, "r", encoding="utf-8") as f:
+        fry_list = [w.strip().lower() for w in f if w.strip()]
+    return fry_list[:top_n]
+
+def load_phonics_lesson(filepath="phonics_lessons.xlsx", lesson_num=1):
+    """Load target words for a given UFLI lesson (Sheet2)."""
     wb = openpyxl.load_workbook(filepath)
-    ws = wb.active
+    ws = wb.worksheets[1]  # Sheet2 (Python index 1)
 
-    mastered_words = []
-    target_words = []
+    row = ws[lesson_num + 1]  # row 2 = lesson 1, so lesson_num + 1
+    rule = row[0].value
+    words_raw = row[1].value
+    target_words = [w.strip() for w in words_raw.split(",") if w.strip()]
 
-    for row in ws.iter_rows(min_row=2):
-        for idx in [1, 2, 4]:
-            if row[idx].value:
-                mastered_words.append(str(row[idx].value).strip())
-        for idx in [3, 5]:
-            if row[idx].value:
-                target_words.append(str(row[idx].value).strip())
+    return rule, target_words
 
-    return mastered_words, target_words
 
-def generate_decodable_text(mastered_words, target_words, num_pages=5):
+def generate_decodable_text(mastered_words, target_words, phonics_class, num_pages=5):
     prompt = f"""
-    Write a short children's decodable book.
-    Use primarily these mastered words: {mastered_words}.
-    Include and repeat these target learning words: {target_words}.
+    Write a short children's decodable book for UFLI phonics class {phonics_class}.
+    Known words (previously mastered, high frequency): {mastered_words}.
+    Target phonics words (focus for this lesson): {target_words}.
     Sentences should be short, simple, and repetitive.
     The book should have {num_pages} pages, each separated by a line containing only '---'.
     """
@@ -55,7 +58,7 @@ def analyze_story_words(story_text, mastered_words, target_words):
     ratio_mastered = len(used_mastered) / len(mastered_set) if mastered_set else 0
     ratio_target = len(used_target) / len(target_set) if target_set else 0
 
-    return used_mastered, used_target, ratio_mastered, ratio_target, (used_mastered+used_target)/words
+    return used_mastered, used_target, ratio_mastered, ratio_target, (len(used_mastered) + len(used_target)) / max(1, len(words))
 
 def extract_character_description(story_text):
     """Ask GPT to summarize the main character for consistent illustration."""
@@ -77,6 +80,8 @@ def extract_character_description(story_text):
     print(f"Character description extracted: {description}")
     return description
 
+
+
 def generate_images_for_story(story_text, client, output_dir, character_description=""):
     pages = [p.strip() for p in story_text.split("---") if p.strip()]
     os.makedirs(output_dir, exist_ok=True)
@@ -85,10 +90,6 @@ def generate_images_for_story(story_text, client, output_dir, character_descript
         prompt = f"""
         Children's book page. Show the main character {character_description}.
         Create a full illustration in a hand-drawn, cartoonish, bright, child-friendly style.
-        At the bottom of the page, include the following text inside a neat white text box 
-        with black lettering, sized to fit within the page without cutting off: '{page}'.
-        The text should be fully visible, readable, and contained within the image.
-        It's necessary that the text does NOT go off the page. 
         """
         response = client.images.generate(
             model="gpt-image-1",
@@ -101,24 +102,27 @@ def generate_images_for_story(story_text, client, output_dir, character_descript
             f.write(base64.b64decode(img_b64))
         print(f"Saved image: {image_path}")
 
-def main():
-    excel_path = "Updated Child Data Aug12th2015 (1).xlsx"
-    mastered_words, target_words = extract_word_lists(excel_path)
 
-    # Always generate a 5-page story, no regeneration
-    num_pages = 5 
-    story_text = generate_decodable_text(mastered_words, target_words, num_pages=num_pages)
+def main():
+    mastered_words = load_fry_words("1000words.txt", top_n=100)
+
+    lesson_num = 7  # Example: lesson 7 = row 8 in Excel
+    rule, target_words = load_phonics_lesson("phonics_lessons.xlsx", lesson_num)
+
+    num_pages = 5
+    story_text = generate_decodable_text(mastered_words, target_words, phonics_class=lesson_num, num_pages=num_pages)
 
     used_mastered, used_target, ratio_mastered, ratio_target, freq_score = analyze_story_words(
         story_text, mastered_words, target_words
     )
 
-    # Extract the main character description for consistent illustrations
     character_description = extract_character_description(story_text)
+
 
     output_file = os.path.join(OUTPUT_DIR, "story.txt")
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     with open(output_file, "w", encoding="utf-8") as f:
+        f.write(f"Phonics Lesson {lesson_num}: {rule}\n\n")
         f.write(story_text + "\n\n")
         f.write("Mastered words used:\n")
         f.write(", ".join(used_mastered) + "\n")
