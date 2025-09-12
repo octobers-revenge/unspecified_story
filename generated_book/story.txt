@@ -1,57 +1,55 @@
-Phonics Lesson 7: f = /f/
+Phonics Lesson 9: n = /n/
 
-**Fun with Fit and Fat**  
-*By [Your Name]*  
+**Title: The Cat's Nap**
 
 ---
 
 Page 1:  
-I am fit.  
-I can run.  
-I can jump.  
-It is fun!  
+The cat is in a big box.  
+The box is not fat.  
+The cat is mad.  
 
 ---
 
 Page 2:  
-Look at the fat cat.  
-The fat cat can sit.  
-The fat cat is not fit.  
-Oh, no!  
+The cat had a nap.  
+She is in the box.  
+The box is hot.  
 
 ---
 
 Page 3:  
-The cat wants to run.  
-The cat wants to jump.  
-The cat wants to be fit.  
-Can the cat be fit?  
+The cat sees a pin.  
+The pin is on the mat.  
+She wants the pin.  
 
 ---
 
 Page 4:  
-The cat can play!  
-The cat can run fast.  
-The cat can jump high.  
-The cat is now fit!  
+The cat taps the pin.  
+The pin is not in.  
+The pin is out!  
 
 ---
 
 Page 5:  
-Fun is fit!  
-Fit is fun!  
-The fat cat is fit.  
-What a fun cat!  
+The cat is a fun cat!  
+She will nap again.  
+The cat is happy!  
 
 ---
 
-Mastered words used:
-a, am, and, at, be, by, can, i, is, it, look, no, not, now, the, to, what, with, your
-Ratio used / total mastered: 0.19
+Base/mastered words used:
+a, big, cat, fun, had, hot, in, is, mad, nap, not, on, out, she, the, will
+Ratio used / total base words: 0.06
+
+Review words from old phonics patterns used:
+cat, fat, fun, in, mad
+Ratio used / total review words: 0.25
 
 Target words used:
-fat, fit, fun
-Ratio used / total target: 1.00
+in, nap, pin
+Ratio used / total target words: 0.60
 
 Character description for illustrations:
-The main character is a chubby, fluffy gray cat wearing a bright red collar, who transforms from being unfit to energetic and playful.
+The main character is a fluffy, gray cat wearing a small red collar, with bright green eyes and a playful demeanor.
