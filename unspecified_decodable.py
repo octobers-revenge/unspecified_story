@@ -102,30 +102,72 @@ def extract_character_description(story_text):
     print(f"Character description extracted: {description}")
     return description
 
-def generate_images_for_story(story_text, client, output_dir, character_description=""):
+def generate_main_character_image(client, character_description, output_dir):
+    """
+    Generate and save a main character reference image.
+    """
+    os.makedirs(output_dir, exist_ok=True)
+    prompt = f"""
+    Create a full-body illustration of the main character for a children's book.
+    Character description: {character_description}.
+    Style: hand-drawn, cartoonish, bright, child-friendly.
+    No text in the image.
+    """
+    response = client.images.generate(
+        model="gpt-image-1",
+        prompt=prompt,
+        size="1024x1024"
+    )
+    img_b64 = response.data[0].b64_json
+    character_path = os.path.join(output_dir, "main_character.png")
+    with open(character_path, "wb") as f:
+        f.write(base64.b64decode(img_b64))
+    print(f"Saved main character reference image: {character_path}")
+    return character_path
+
+
+def generate_images_for_story(story_text, client, output_dir, character_description="", character_ref_path=None):
     pages = [p.strip() for p in story_text.split("---") if p.strip()]
     os.makedirs(output_dir, exist_ok=True)
+
+    # If we have a reference image, upload it for consistency
+    referenced_image_ids = []
+    if character_ref_path:
+        with open(character_ref_path, "rb") as f:
+            img_b64 = base64.b64encode(f.read()).decode("utf-8")
+        # Register the image with GPT
+        response = client.images.generate(
+            model="gpt-image-1",
+            prompt="This is a character reference image for consistency.",
+            size="512x512",
+            image=[{"name": "character_ref.png", "b64_json": img_b64}]
+        )
+        referenced_image_ids = [response.data[0].id]  # store reference image id
+
     for i, page in enumerate(pages, start=1):
         prompt = f"""
         Illustrate this children's book page:
 
         Page text: {page}
 
-        Show the main character: {character_description}.
-        Include all actions and interactions described on this page.
+        Always show the main character (consistent with the reference image).
         Style: hand-drawn, cartoonish, bright, child-friendly.
-        No text should appear in the illustration.
+        No text in the illustration.
         """
+
         response = client.images.generate(
             model="gpt-image-1",
             prompt=prompt,
-            size="1536x1024"
+            size="1536x1024",
+            referenced_image_ids=referenced_image_ids if referenced_image_ids else None
         )
+
         img_b64 = response.data[0].b64_json
         image_path = os.path.join(output_dir, f"page_{i}.png")
         with open(image_path, "wb") as f:
             f.write(base64.b64decode(img_b64))
         print(f"Saved image: {image_path}")
+
 
 def main():
     lesson_num = 9
@@ -169,7 +211,11 @@ def main():
     print(f"Used {len(used_target)}/{len(target_words)} target words ({ratio_target:.2f})")
     print(f"Overall frequency of mastered/review/target words in story: {freq_score:.2f}")
 
-    generate_images_for_story(story_text, client, IMAGES_DIR, character_description)
+    
+    character_ref_path = generate_main_character_image(client, character_description, IMAGES_DIR)
+
+
+    generate_images_for_story(story_text, client, IMAGES_DIR, character_description, character_ref_path)
 
 if __name__ == "__main__":
     main()
