@@ -2,21 +2,27 @@ import os
 import re
 import openpyxl
 import base64
+from io import BytesIO
 from dotenv import load_dotenv
 from openai import OpenAI
 
 load_dotenv()
 client = OpenAI()
 
-OUTPUT_DIR = "generated_book"
+OUTPUT_DIR = "generated_book_new"
 IMAGES_DIR = os.path.join(OUTPUT_DIR, "images")
 os.makedirs(IMAGES_DIR, exist_ok=True)
 
-def load_base_words(filepath="mixedwords.txt"):
-    with open(filepath, "r", encoding="utf-8") as f:
-        content = f.read()
-        words = [w.strip().lower() for w in content.split(",") if w.strip()]
-    return words
+def load_combined_base_words(folder="Word Lists"):
+    words = set()
+    for filename in ["FrysAndAOA.txt", "K-2DolchWordList.txt"]:
+        filepath = os.path.join(folder, filename)
+        with open(filepath, "r", encoding="utf-8") as f:
+            content = f.read()
+            for w in re.split(r"[,\\n]", content):
+                if w.strip():
+                    words.add(w.strip().lower())
+    return list(words)
 
 def load_phonics_lesson(filepath="phonics_lessons.xlsx", lesson_num=1):
     wb = openpyxl.load_workbook(filepath)
@@ -30,7 +36,7 @@ def load_phonics_lesson(filepath="phonics_lessons.xlsx", lesson_num=1):
 def load_cumulative_mastered_words(filepath="phonics_lessons.xlsx", lesson_num=1):
     wb = openpyxl.load_workbook(filepath)
     ws = wb.worksheets[1]
-    mastered = set(load_base_words())
+    mastered = set(load_combined_base_words())
     for ln in range(1, lesson_num):
         row = ws[ln + 1]
         words_raw = row[1].value
@@ -103,9 +109,6 @@ def extract_character_description(story_text):
     return description
 
 def generate_main_character_image(client, character_description, output_dir):
-    """
-    Generate and save a main character reference image.
-    """
     os.makedirs(output_dir, exist_ok=True)
     prompt = f"""
     Create a full-body illustration of the main character for a children's book.
@@ -125,41 +128,29 @@ def generate_main_character_image(client, character_description, output_dir):
     print(f"Saved main character reference image: {character_path}")
     return character_path
 
-
-def generate_images_for_story(story_text, client, output_dir, character_description="", character_ref_path=None):
+def generate_images_for_story(story_text, client, output_dir, character_description, character_ref_path):
     pages = [p.strip() for p in story_text.split("---") if p.strip()]
     os.makedirs(output_dir, exist_ok=True)
 
-    # If we have a reference image, upload it for consistency
-    referenced_image_ids = []
-    if character_ref_path:
-        with open(character_ref_path, "rb") as f:
-            img_b64 = base64.b64encode(f.read()).decode("utf-8")
-        # Register the image with GPT
-        response = client.images.generate(
-            model="gpt-image-1",
-            prompt="This is a character reference image for consistency.",
-            size="512x512",
-            image=[{"name": "character_ref.png", "b64_json": img_b64}]
-        )
-        referenced_image_ids = [response.data[0].id]  # store reference image id
+    with open(character_ref_path, "rb") as f:
+        character_image_bytes = f.read()
+    character_image_io = BytesIO(character_image_bytes)
+    character_image_io.name = "main_character.png"
 
     for i, page in enumerate(pages, start=1):
         prompt = f"""
         Illustrate this children's book page:
-
         Page text: {page}
-
         Always show the main character (consistent with the reference image).
         Style: hand-drawn, cartoonish, bright, child-friendly.
         No text in the illustration.
         """
-
-        response = client.images.generate(
+        response = client.images.edit(
             model="gpt-image-1",
             prompt=prompt,
+            image=[character_image_io],  
             size="1536x1024",
-            referenced_image_ids=referenced_image_ids if referenced_image_ids else None
+            quality="medium"
         )
 
         img_b64 = response.data[0].b64_json
@@ -168,10 +159,9 @@ def generate_images_for_story(story_text, client, output_dir, character_descript
             f.write(base64.b64decode(img_b64))
         print(f"Saved image: {image_path}")
 
-
 def main():
-    lesson_num = 9
-    base_words = load_base_words("mixedwords.txt")
+    lesson_num = 8
+    base_words = load_combined_base_words("Word Lists")
     mastered_words = load_cumulative_mastered_words("phonics_lessons.xlsx", lesson_num)
     review_words = load_previous_phonics_words("phonics_lessons.xlsx", lesson_num)
     rule, target_words = load_phonics_lesson("phonics_lessons.xlsx", lesson_num)
@@ -211,11 +201,9 @@ def main():
     print(f"Used {len(used_target)}/{len(target_words)} target words ({ratio_target:.2f})")
     print(f"Overall frequency of mastered/review/target words in story: {freq_score:.2f}")
 
-    
     character_ref_path = generate_main_character_image(client, character_description, IMAGES_DIR)
-
-
     generate_images_for_story(story_text, client, IMAGES_DIR, character_description, character_ref_path)
 
 if __name__ == "__main__":
     main()
+
