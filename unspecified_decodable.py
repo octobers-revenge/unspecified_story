@@ -13,16 +13,33 @@ OUTPUT_DIR = "generated_book_new"
 IMAGES_DIR = os.path.join(OUTPUT_DIR, "images")
 os.makedirs(IMAGES_DIR, exist_ok=True)
 
-def load_combined_base_words(folder="Word Lists"):
-    words = set()
-    for filename in ["FrysAndAOA.txt", "K-2DolchWordList.txt"]:
-        filepath = os.path.join(folder, filename)
-        with open(filepath, "r", encoding="utf-8") as f:
-            content = f.read()
-            for w in re.split(r"[,\\n]", content):
-                if w.strip():
-                    words.add(w.strip().lower())
-    return list(words)
+def load_fry_words(filepath="1000words.txt", grade="K"):
+    fry_counts = {"K": 150, "1": 300, "2": 450}
+    n = fry_counts.get(grade, 150)
+    with open(filepath, "r", encoding="utf-8") as f:
+        all_fry = [line.strip().lower() for line in f if line.strip()]
+    return all_fry[:n]
+
+def load_combined_base_words(folder="Word Lists", grade="K"):
+    grade_files = {
+        "K": ("kindergartenAOA.txt", "KindergartenWordList.txt"),
+        "1": ("grade1AOA.txt", "FirstGradeWordList.txt"),
+        "2": ("grade2AOA.txt", "SecondGradeWordList.txt")
+    }
+
+    aoa_file, dolch_file = grade_files.get(grade, ("kindergartenAOA.txt", "KindergartenWordList.txt"))
+    combined = set()
+    for fname in [aoa_file, dolch_file]:
+        path = os.path.join(folder, fname)
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                word = line.strip().lower()
+                if word:
+                    combined.add(word)
+
+    fry_words = load_fry_words("1000words.txt", grade)
+    combined.update(fry_words)
+    return list(combined)
 
 def load_phonics_lesson(filepath="phonics_lessons.xlsx", lesson_num=1):
     wb = openpyxl.load_workbook(filepath)
@@ -33,10 +50,10 @@ def load_phonics_lesson(filepath="phonics_lessons.xlsx", lesson_num=1):
     target_words = [w.strip() for w in words_raw.split(",") if w.strip()]
     return rule, target_words
 
-def load_cumulative_mastered_words(filepath="phonics_lessons.xlsx", lesson_num=1):
+def load_cumulative_mastered_words(filepath="phonics_lessons.xlsx", lesson_num=1, grade="K"):
     wb = openpyxl.load_workbook(filepath)
     ws = wb.worksheets[1]
-    mastered = set(load_combined_base_words())
+    mastered = set(load_combined_base_words(grade=grade))
     for ln in range(1, lesson_num):
         row = ws[ln + 1]
         words_raw = row[1].value
@@ -148,7 +165,7 @@ def generate_images_for_story(story_text, client, output_dir, character_descript
         response = client.images.edit(
             model="gpt-image-1",
             prompt=prompt,
-            image=[character_image_io],  
+            image=[character_image_io],
             size="1536x1024",
             quality="medium"
         )
@@ -160,16 +177,19 @@ def generate_images_for_story(story_text, client, output_dir, character_descript
         print(f"Saved image: {image_path}")
 
 def main():
-    lesson_num = 8
-    base_words = load_combined_base_words("Word Lists")
-    mastered_words = load_cumulative_mastered_words("phonics_lessons.xlsx", lesson_num)
-    review_words = load_previous_phonics_words("phonics_lessons.xlsx", lesson_num)
-    rule, target_words = load_phonics_lesson("phonics_lessons.xlsx", lesson_num)
+    # Change GRADE to "K", "1", or "2" as needed
+    GRADE = "K"
+    LESSON_NUM = 8
+
+    base_words = load_combined_base_words("Word Lists", grade=GRADE)
+    mastered_words = load_cumulative_mastered_words("phonics_lessons.xlsx", lesson_num=LESSON_NUM, grade=GRADE)
+    review_words = load_previous_phonics_words("phonics_lessons.xlsx", lesson_num=LESSON_NUM)
+    rule, target_words = load_phonics_lesson("phonics_lessons.xlsx", lesson_num=LESSON_NUM)
 
     num_pages = 5
     story_text = generate_decodable_text(
         mastered_words, review_words, target_words,
-        phonics_class=lesson_num, num_pages=num_pages
+        phonics_class=LESSON_NUM, num_pages=num_pages
     )
 
     used_base, used_review, used_target, ratio_base, ratio_review, ratio_target, freq_score = analyze_story_words(
@@ -181,7 +201,7 @@ def main():
     output_file = os.path.join(OUTPUT_DIR, "story.txt")
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     with open(output_file, "w", encoding="utf-8") as f:
-        f.write(f"Phonics Lesson {lesson_num}: {rule}\n\n")
+        f.write(f"Phonics Lesson {LESSON_NUM}: {rule}\n\n")
         f.write(story_text + "\n\n")
         f.write("Base/mastered words used:\n")
         f.write(", ".join(used_base) + "\n")
