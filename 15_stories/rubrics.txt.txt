@@ -1,0 +1,23 @@
+Score of 3 = High quality
+Score of 2 = Adequate or slightly lacking
+Score of 1 = Needs improvement or bad
+
+Sentence Complexity
+3) Sentences are short and repetitive, and doesn't contain advanced vocabulary and grammar. 
+2) Mostly simple sentences, but might have a some strange phrasing, or sentences that are too long. 
+1) Sentences are too complex, or words are used that would be completely foreign to a child. 
+
+Phonics use
+3) Targets the selected phonics pattern frequently, and consists of primarily decodable words for all words that aren't sight words. 
+2) Selected phonics pattern is used somewhat consistently. Some non sight words are difficult to decode.
+1) Selected phonics pattern is not frequently used. There are many words that a child would be clueless about.
+
+Interest of kids
+3) The characters and the plot are engaging and contain fun and silly elements that a child would enjoy.
+2) The characters and plot are consistent, but might not be the most interesting or engaging.
+1) The story is very boring and lacks proper characters or a plot. This would not be interesting at all for a child.
+
+Overall
+3) The story is easily decodable and contains familiar words, while targeting a specific phonics pattern, and is engaging
+2) The story might have a few issues with decodability and sentence complexity, but overall pretty understandable and engaging. 
+1) The story is too complex, doesn't target the phonics pattern correctly, and is uninteresting.
