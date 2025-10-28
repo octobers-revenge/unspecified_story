@@ -1,53 +1,17 @@
 Phonics Pattern: u /ŭ/ (short u sound as in cup)
 
-**Emma Johnson and the Reading Fairytale**
+**Emma Johnson and the Fun Fairytale**  
 
+Emma Johnson has a big cup.  
+---  
+Emma feels hot in the sun.  
+---  
+Emma sits in the shade with Gus.  
+---  
+Emma and Gus read a fun tale.  
+---  
+The tale has a bug and a pup.  
 ---
 
-Page 1:  
-Emma Johnson loves to read.  
-She likes to read fun books.  
-One day, she finds a cup.  
-The cup is big and blue.  
-Emma sees a bug in the cup.  
-
----
-
-Page 2:  
-“Oh no!” says Emma.  
-The bug is in the cup!  
-Emma wants to help the bug.  
-She looks for a way out.  
-“Come on, little bug!” she says.  
-
----
-
-Page 3:  
-Emma has a big book.  
-The book is about fairytales.  
-She opens the book wide.  
-“Let’s read a story!” she says.  
-The bug jumps out of the cup.  
-
----
-
-Page 4:  
-The bug sits on the page.  
-Emma reads about a fun prince.  
-The prince loves a big, red truck.  
-He goes to find his friend.  
-“Let’s go on a trip!” they say.  
-
----
-
-Page 5:  
-Emma smiles at the bug.  
-“Reading is so much fun!”  
-The bug gives a little jump.  
-Together, they read and play.  
-Emma and the bug are happy!  
-
----
-
-Decodable Score: 0.13
-Diversity Score: 0.46
+Decodable Score: 0.20
+Diversity Score: 0.55

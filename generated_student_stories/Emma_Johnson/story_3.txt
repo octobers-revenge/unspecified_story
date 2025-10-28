@@ -1,49 +1,17 @@
 Phonics Pattern: g /g/ (the 'g' sound as in go)
 
-**Emma Johnson and the Great Fairy Tale**
+**Emma Johnson and the Great Fairytale**  
 
----
-
-Page 1:  
 Emma Johnson loves to read.  
-She reads fairy tales every day.  
-One day, she finds a big book.  
-The book is full of magic!  
-
+---  
+One day she finds a big book.  
+---  
+The book has a tale about a frog.  
+---  
+The frog is green and goes to a gig.  
+---  
+Emma laughs and reads with a grin.  
 ---
 
-Page 2:  
-Emma says, “I will read this!”  
-In the book, she sees a frog.  
-The frog is green and glad.  
-“Hello, Emma!” says the frog.  
-
----
-
-Page 3:  
-“Can you help me?” asks the frog.  
-“I lost my golden crown,” he says.  
-“Help me find it, please!”  
-Emma says, “Yes, I will help!”  
-
----
-
-Page 4:  
-Emma and the frog go to the gate.  
-They see a big giant tree.  
-“Is it under the tree?” asks Emma.  
-“No, it is not!” says the frog.  
-
----
-
-Page 5:  
-They look by a small pond.  
-The crown is in the grass!  
-Emma picks it up with glee.  
-“Here is your crown!” she says.  
-“Thank you, Emma!” says the frog.  
-
----
-
-Decodable Score: 0.12
-Diversity Score: 0.49
+Decodable Score: 0.19
+Diversity Score: 0.67

@@ -56,21 +56,32 @@ def calculate_diversity_score(story_text):
     return unique_count / len(words)
 
 def generate_decodable_story(student_profile, phonics_pattern, num_pages=5):
+    # Control sentence count per grade
+    if student_profile["grade"] == "K":
+        sentence_rule = "Each page should have exactly **1 sentence**."
+    elif student_profile["grade"] == "1":
+        sentence_rule = "Each page should have exactly **2 short sentences**."
+    else:  # grade 2 or higher
+        sentence_rule = "Each page should have exactly **3 short sentences**."
+
     prompt = f"""
 Create a decodable text for a grade {student_profile['grade']} student aged {student_profile['age']}:
 
 - Focus on the phonics pattern: {phonics_pattern}
 - Include at least 10 words with this phonics pattern
-- Do not use multisyllabic or complex words
+- Do not use multisyllabic or complex words OR words with digraphs and other complex phonics patterns
+- Do not use commas or appositives
 - Use high-frequency words naturally
 - Have a clear problem, events, and solution
 - Use "{student_profile['name']}" as the main character
 - All other character names should follow the phonics pattern
 - The story should primarily be about: {student_profile['interests']}
 - Attend to {student_profile['ethnicity']} cultural context in names or setting
-- Sentences should be simple and repetitive, 5-8 words per sentence
+- Sentences should be simple, repetitive, and easy to decode
+- {sentence_rule}
 - The story should have {num_pages} pages, each separated by '---'
 """
+
     response = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[{"role": "user", "content": prompt}],

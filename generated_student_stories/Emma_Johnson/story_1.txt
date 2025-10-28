@@ -1,48 +1,17 @@
 Phonics Pattern: m /m/ (the 'm' sound as in mat)
 
-**Emma Johnson and the Magical Fairytales**
+**Emma Johnson and the Magic Book**
 
+Emma Johnson has a big red book.  
+---  
+In the book, there are fun tales.  
+---  
+Emma has a friend named Sam.  
+---  
+Sam and Emma read the tales.  
+---  
+They love the magic of the book.  
 ---
 
-Page 1:  
-Emma Johnson loves to read.  
-She likes to read fairytales.  
-One day, she finds a book.  
-It is a big book of fairytales.  
-
----
-
-Page 2:  
-Emma sees her friend, Sam.  
-“Look at my book, Sam!” she says.  
-Sam smiles and sits with Emma.  
-“Let’s read about a magic man!”  
-
----
-
-Page 3:  
-In the book, there is a man.  
-He has a magic hat and a map.  
-The man helps a sad man.  
-The sad man wants to be happy.  
-
----
-
-Page 4:  
-“Let’s help the sad man!” says Emma.  
-“Let’s read more!” says Sam.  
-They read and read and read.  
-The magic man helps the sad man!  
-
----
-
-Page 5:  
-The sad man is now happy!  
-Emma and Sam jump with glee.  
-“Reading fairytales is so fun!”  
-Emma smiles at her friend, Sam.  
-
----
-
-Decodable Score: 0.24
-Diversity Score: 0.42
+Decodable Score: 0.23
+Diversity Score: 0.56

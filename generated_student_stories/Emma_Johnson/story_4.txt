@@ -1,47 +1,17 @@
 Phonics Pattern: o /ŏ/ (short o sound as in hot)
 
-**Page 1**  
-Emma Johnson loved to read.  
-She read books in her room.  
-One day, she saw a book.  
-The book had a big frog.  
-“Let’s read it!” said Emma.
+**Emma Johnson and the Book of Fairytales**
 
+Emma Johnson has a big box.  
+---  
+In the box is a red book.  
+---  
+The book has fun tales to read.  
+---  
+Emma reads a tale of a hot frog.  
+---  
+The frog hops to a pond of gold.  
 ---
 
-**Page 2**  
-Emma opened the book.  
-The frog wore a red coat.  
-The frog said, “Hop with me!”  
-Emma said, “I will hop!”  
-They both hopped on the spot.
-
----
-
-**Page 3**  
-Then, they saw a big pond.  
-In the pond, there was a dog.  
-The dog was lost and sad.  
-Emma said, “I can help you!”  
-The frog said, “Let’s go to the dog!”
-
----
-
-**Page 4**  
-Emma and the frog ran fast.  
-They got to the pond quick.  
-“Hello, dog!” said Emma.  
-“Come with us, do not stop!”  
-The dog wagged his tail in joy.
-
----
-
-**Page 5**  
-Emma, the frog, and the dog  
-Found a home by the pond.  
-They read fairytales every day.  
-Now, they are a happy lot!  
-Emma loves her new friends a lot!
-
-Decodable Score: 0.14
-Diversity Score: 0.49
+Decodable Score: 0.21
+Diversity Score: 0.58
