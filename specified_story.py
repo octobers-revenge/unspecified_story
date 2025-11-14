@@ -56,7 +56,6 @@ def calculate_diversity_score(story_text):
     return unique_count / len(words)
 
 def generate_decodable_story(student_profile, phonics_pattern, num_pages=5):
-    # Control sentence count per grade
     if student_profile["grade"] == "K":
         sentence_rule = "Each page should have exactly **1 sentence**."
     elif student_profile["grade"] == "1":
@@ -66,7 +65,6 @@ def generate_decodable_story(student_profile, phonics_pattern, num_pages=5):
 
     prompt = f"""
 Create a decodable text for a grade {student_profile['grade']} student aged {student_profile['age']}:
-
 - Focus on the phonics pattern: {phonics_pattern}
 - Include at least 10 words with this phonics pattern
 - Do not use multisyllabic or complex words OR words with digraphs and other complex phonics patterns
