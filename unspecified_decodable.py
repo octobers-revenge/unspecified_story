@@ -78,13 +78,13 @@ def load_previous_phonics_words(filepath="phonics_lessons.xlsx", lesson_num=35):
 def generate_decodable_text(mastered_words, review_words, target_words, phonics_class):
     prompt = f"""
 Write a short decodable story for **first grade** using UFLI phonics lesson {phonics_class}.
-This is a short "o" review lesson (VC, CVC, and CVCC patterns like dog, log, mom, fox).
+This is a short "a" review lesson (VC, CVC, and CVCC patterns like cat, fat, at, hat).
 
 Story requirements:
 - Use only words from the mastered list: {mastered_words}, 
   or review words from past lessons: {review_words}.
 - The target words {target_words} must appear naturally several times.
-- You may add other simple short-o words (VC, CVC, or CVCC) only if needed for clarity.
+- You may add other simple short-a words (VC, CVC, or CVCC) only if needed for clarity.
 - Each sentence should be 4–6 words long.
 - Write exactly **15 sentences**.
 - The story must make sense and flow clearly — with a beginning, middle, and end.
@@ -97,7 +97,6 @@ Story requirements:
 - All the names of the characters should use the targeted phonics pattern
 
 Output the story as plain text, with one sentence per line.
-
 
 
 
@@ -114,7 +113,7 @@ Output the story as plain text, with one sentence per line.
 # --- Main (fixed to only 1st grade, Lesson 35) ---
 def main():
     grade = "1"
-    lesson_num = 37
+    lesson_num = 35
     num_stories = 1
 
     for i in range(1, num_stories + 1):
