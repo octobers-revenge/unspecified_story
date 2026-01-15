@@ -9,9 +9,6 @@ client = OpenAI()
 OUTPUT_DIR = "generated_decodable_stories"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# --------------------------------------------------
-# Fry word limits by UFLI lesson (from spreadsheet)
-# --------------------------------------------------
 LESSON_FRY_LIMITS = {
     35: 40,    # K mid: First 100 lists 1–4
     48: 60,    # K end: + Second 100 lists 1–2
@@ -137,17 +134,13 @@ STORY_EXPECTATIONS = {
     }
 }
 
-# --------------------------------------------------
-# Load Fry words (explicit limit)
-# --------------------------------------------------
+
 def load_fry_words(filepath="Word Lists/1000words.txt", limit=100):
     with open(filepath, "r", encoding="utf-8") as f:
         words = [line.strip().lower() for line in f if line.strip()]
     return words[:limit]
 
-# --------------------------------------------------
-# Load phonics lessons
-# --------------------------------------------------
+
 def load_phonics_lesson(filepath="phonics_lessons.xlsx", lesson_num=35):
     wb = openpyxl.load_workbook(filepath)
     ws = wb.worksheets[1]
@@ -170,9 +163,7 @@ def load_previous_phonics_words(filepath="phonics_lessons.xlsx", lesson_num=35):
             )
     return list(review_words)
 
-# --------------------------------------------------
-# Text generation
-# --------------------------------------------------
+
 def generate_decodable_text(
     fry_words,
     review_words,
@@ -334,20 +325,17 @@ Story:
     return response.choices[0].message.content.strip()
 
 
-# --------------------------------------------------
-# Main: generate 6 stories
-# --------------------------------------------------
+
 def main():
-    lessons = [35, 48, 60, 80, 91, 120]  # Updated to match your current LESSON_GRADE keys
+    lessons = [35, 48, 60, 80, 91, 120]  
 
     for lesson_num in lessons:
         print(f"Generating story for UFLI lesson {lesson_num}...")
 
-        # Load Fry words for this lesson
         fry_limit = LESSON_FRY_LIMITS.get(lesson_num, 40)  # default to 40 if missing
         fry_words = load_fry_words(limit=fry_limit)
 
-        # Load previous phonics words
+
         review_words = load_previous_phonics_words(
             "phonics_lessons.xlsx",
             lesson_num=lesson_num
