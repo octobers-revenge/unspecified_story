@@ -11,12 +11,12 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
 LESSON_FRY_LIMITS = {
-    35: 40,    # K mid: First 100 lists 1–4
-    48: 60,    # K end: + Second 100 lists 1–2
-    57: 80,    # Grade 1 beginning
-    80: 120,   # Grade 1 end
-    91: 240,   # Grade 2 beginning
-    108: 240   # Grade 2 end
+    35: 50,    # K mid: First 100 lists 1–4
+    48: 100,    # K end: + Second 100 lists 1–2
+    57: 125,    # Grade 1 beginning
+    80: 200,   # Grade 1 end
+    91: 225,   # Grade 2 beginning
+    108: 300   # Grade 2 end
 }
 
 LESSON_GRADE = {
@@ -74,8 +74,9 @@ def load_previous_phonics_words(filepath="phonics_lessons.xlsx", lesson_num=35):
 def generate_story_outline(fry_words, review_words, target_words, phonics_class, grade, phase, sentence_range, target_repeat_guidance):
     prompt = f"""
 Plan a short decodable story aligned to UFLI phonics lesson {phonics_class}.
-Use only Fry sight words (grade-appropriate) and words from previous phonics lessons.
-Include target words naturally several times.
+Include target words {target_words} with that specific phonics pattern naturally as much as possible
+The rest of the words should exclusively be from these sources: Fry words ({fry_words}) and previous phonics words ({review_words}).
+
 
 Story expectations:
 - Grade {grade}, {phase} of school year
@@ -93,6 +94,8 @@ Page structure:
 - Kindergarten: ~1 sentence per page
 - Grade 1: ~2–3 sentences per page
 - Grade 2: ~4–5 sentences per page
+
+Each page should be separated with --- 
 
 Examples for tone and sentence structure:
 Min has a kit.

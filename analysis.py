@@ -1,6 +1,54 @@
 import openpyxl
 import pronouncing
 import string
+import re
+
+VCe_PATTERN = re.compile(r"[aeiou][bcdfghjklmnpqrstvwxyz]e$")
+
+def has_vce_ending(word):
+    return bool(VCe_PATTERN.search(word))
+
+def analyze_ture_story(story_text, lesson_num):
+    words = story_text.split()
+    cleaned_words = [
+        w.strip(string.punctuation).lower()
+        for w in words
+        if w.strip(string.punctuation)
+    ]
+
+    total_words = len(cleaned_words)
+    if total_words == 0:
+        return {
+            "ture_pct": 0,
+            "fry_or_review_pct": 0,
+            "leftover_pct": 0,
+        }
+
+    fry_limit = LESSON_FRY_LIMITS.get(lesson_num, 40)
+    fry_words = load_fry_words(limit=fry_limit)
+    review_words = load_previous_phonics_words(
+        "phonics_lessons.xlsx", lesson_num
+    )
+
+    ture_count = 0
+    known_count = 0
+    leftover_count = 0
+
+    for word in cleaned_words:
+        # Count words that end with 'e' as "ture"
+        if word.endswith("e"):
+            ture_count += 1
+        elif word in fry_words or word in review_words:
+            known_count += 1
+        else:
+            leftover_count += 1
+
+    return {
+        "ture_pct": (ture_count / total_words) * 100,
+        "fry_or_review_pct": (known_count / total_words) * 100,
+        "leftover_pct": (leftover_count / total_words) * 100,
+    }
+
 
 # --------------------------------------------------
 # Fry word limits by UFLI lesson
@@ -8,10 +56,10 @@ import string
 LESSON_FRY_LIMITS = {
     35: 40,
     48: 60,
-    57: 80,
+    60: 80,
     80: 120,
-    95: 240,
-    108: 240
+    91: 240,
+    120: 240
 }
 
 # --------------------------------------------------
@@ -23,7 +71,12 @@ LESSON_PHONEMES = {
     36: ["IH1"],              # short i
     37: ["AA1"],       # short o
     39: ["AH1"],              # short u
-    40: ["EH1"],              # short e
+    40: ["EH1"],  
+    48: ["CH"],
+    57: ["S"],
+    80: [],
+    91: ["UW1"],
+    108: [],            
 }
 
 # --------------------------------------------------
@@ -109,28 +162,46 @@ def analyze_story(story_text, lesson_num):
 # --------------------------------------------------
 if __name__ == "__main__":
 
-    lesson_num = 37  # ← CHANGE THIS PER STORY
+    lesson_num = 120  # ← CHANGE THIS PER STORY
 
     story = """
-    A fox and a dog are pals.  
-    They like to jog at the pond.  
-    One hot day, the dog got a big mop.  
-    The fox did not have a job to do, so he sat on a log.  
-    The dog got the mop wet in the pond.  
-    But then, a pod fell on the dog!  
-    The dog sobs and nods.  
-    The fox hops and hops to help his pal.  
-    The fox and dog blot the pod.  
-    They bop and flop as they mop it up.  
-    The pond is not a bog now.  
-    The fox has fun and hops onto the log.  
-    The dog runs to the fox.  
-    The pals sit on the log and look at the pond.  
-    They are glad the pond is no longer a bog.  
-    The fox and the dog had a lot of fun.
+    Tom was a small boy with a big dream.  
+    He wanted to build a cool treehouse.  
+    On Tuesday, he got a blueprint for his plan.  
+    The blueprint was new and very blue.  
+
+    His mom came to see his plan.  
+    She looked at it and smiled.  
+    Tom and his mom began to gather items.  
+    They found wood, nails, and a hammer. 
+    
+    Tom's sister, Sue, also came to help.  
+    She brought some juice and fruit.  
+    Tom asked, "Can I have a sip?"  
+    Sue gave him juice and a big red apple. 
+    
+    The wind blew strong all day.  
+    But they did not stop.  
+    Tom and Sue took turns with the hammer.  
+    Their arms got tired, but they kept on. 
+    
+    At last, they had built the base.  
+    They were glad and took a break.  
+    Tom drew a big sun on the blueprint.  
+    He said, "This will be the top of the treehouse."  
+
+    On the next day, the work began again.  
+    Tom felt like it was a long cruise, not work.  
+    He ate some fruit while thinking.  
+    Sue said, "I will chew some gum."  
+
+    Tom laughed and nodded.  
+    After much effort, the treehouse was done.  
+    It was a fine new place for fun.  
+    Tom and Sue celebrated with more juice.
     """
 
-    results = analyze_story(story, lesson_num)
+    results = analyze_ture_story(story, lesson_num)
 
     print(f"\nUFLI Lesson {lesson_num} Analysis\n" + "-" * 30)
     for k, v in results.items():
